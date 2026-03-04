@@ -1,0 +1,54 @@
+{
+    "name": "lgarret/health-check-bundle",
+    "description": "Symfony bundle providing a /health endpoint to monitor application and dependency status",
+    "type": "symfony-bundle",
+    "keywords": ["symfony", "bundle", "health", "check", "monitoring"],
+    "license": "MIT",
+    "require": {
+        "php": ">=8.2",
+        "symfony/cache": "^6.4 || ^7.0",
+        "symfony/console": "^6.4 || ^7.0",
+        "symfony/framework-bundle": "^6.4 || ^7.0"
+    },
+    "require-dev": {
+        "doctrine/dbal": "^4.4",
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "phpstan/phpstan": "^2.0",
+        "phpstan/phpstan-symfony": "^2.0",
+        "phpunit/phpunit": "^10.5 || ^11.0"
+    },
+    "suggest": {
+        "doctrine/dbal": "Required for the built-in Doctrine health check"
+    },
+    "autoload": {
+        "psr-4": {
+            "Lgarret\\HealthCheckBundle\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Lgarret\\HealthCheckBundle\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+      {
+        "name": "Louis Garret",
+        "email": "louis@garret.ovh",
+        "homepage": "https://github.com/LouisGarret"
+      }
+    ],
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-cs-fixer/shim": false
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "phpstan": "phpstan analyse",
+        "cs-check": "php-cs-fixer fix --dry-run --diff",
+        "cs-fix": "php-cs-fixer fix"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
