@@ -53,6 +53,10 @@ final class Configuration implements ConfigurationInterface
                             ->defaultTrue()
                             ->info('Enable built-in Doctrine DBAL checks (one per connection, auto-detected).')
                         ->end()
+                        ->booleanNode('asset_mapper')
+                            ->defaultTrue()
+                            ->info('Enable built-in AssetMapper check (verifies manifest.json exists, auto-detected).')
+                        ->end()
                     ->end()
                 ->end()
             ->end();

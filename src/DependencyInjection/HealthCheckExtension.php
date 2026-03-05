@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lgarret\HealthCheckBundle\DependencyInjection;
 
+use Lgarret\HealthCheckBundle\Check\Builtin\BuiltinCheck;
 use Lgarret\HealthCheckBundle\Check\HealthCheckInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -15,7 +16,7 @@ final class HealthCheckExtension extends Extension
     public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration();
-        /** @var array{path: string, secret: ?string, header: string, timeout: int, cache: array{enabled: bool, ttl: int}, checks: array{doctrine: bool}} $config */
+        /** @var array{path: string, secret: ?string, header: string, timeout: int, cache: array{enabled: bool, ttl: int}, checks: array{doctrine: bool, asset_mapper: bool}} $config */
         $config = $this->processConfiguration($configuration, $configs);
 
         $container->setParameter('health_check.path', $config['path']);
@@ -24,7 +25,10 @@ final class HealthCheckExtension extends Extension
         $container->setParameter('health_check.timeout', $config['timeout']);
         $container->setParameter('health_check.cache.enabled', $config['cache']['enabled']);
         $container->setParameter('health_check.cache.ttl', $config['cache']['ttl']);
-        $container->setParameter('health_check.checks.doctrine', $config['checks']['doctrine']);
+
+        foreach (BuiltinCheck::cases() as $check) {
+            $container->setParameter('health_check.checks.' . $check->value, $config['checks'][$check->value]);
+        }
 
         $container->registerForAutoconfiguration(HealthCheckInterface::class)
             ->addTag('health_check.check');

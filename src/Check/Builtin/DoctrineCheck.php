@@ -18,7 +18,7 @@ final class DoctrineCheck implements HealthCheckInterface
 
     public function getName(): string
     {
-        return 'doctrine_' . $this->connectionName;
+        return BuiltinCheck::Doctrine->value . '_' . $this->connectionName;
     }
 
     public function check(): HealthCheckResult

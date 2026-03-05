@@ -30,6 +30,18 @@ health_check:
     resource: '@HealthCheckBundle/config/routes.php'
 ```
 
+### Allow public access
+
+If you use the Symfony SecurityBundle, make sure the health route is publicly accessible:
+
+```yaml
+# config/packages/security.yaml
+security:
+    access_control:
+        - { path: ^/health$, roles: PUBLIC_ACCESS }
+        # ...
+```
+
 ## Configuration
 
 ```yaml
@@ -44,6 +56,7 @@ health_check:
         ttl: 300                              # Optional — cache duration in seconds (default: 300)
     checks:
         doctrine: true                        # Optional — auto-register Doctrine DBAL checks (default: true)
+        asset_mapper: true                    # Optional — auto-register AssetMapper check (default: true)
 ```
 
 | Option            | Type      | Default         | Description                                                                   |
@@ -55,6 +68,7 @@ health_check:
 | `cache.enabled`   | `bool`    | `true`          | Enable caching of health check results.                                       |
 | `cache.ttl`       | `int`     | `300`           | Cache TTL in seconds (5 minutes by default).                                  |
 | `checks.doctrine` | `bool`    | `true`          | Auto-register Doctrine DBAL checks (one per connection) if `doctrine/dbal` is installed. |
+| `checks.asset_mapper` | `bool` | `true`       | Auto-register AssetMapper check if `symfony/asset-mapper` is installed. |
 
 ## Usage
 
@@ -104,16 +118,18 @@ Health Check
 
 The bundle ships with built-in checks that are **automatically registered** when the corresponding packages are installed:
 
-| Check      | Package required  | What it does                                       |
-|------------|-------------------|----------------------------------------------------|
-| `doctrine` | `doctrine/dbal`   | Runs `SELECT 1` on each configured DBAL connection |
+| Check          | Package required              | What it does                                       |
+|----------------|-------------------------------|----------------------------------------------------|
+| `doctrine`     | `doctrine/dbal`               | Runs `SELECT 1` on each configured DBAL connection |
+| `asset_mapper` | `symfony/asset-mapper`        | Checks that `manifest.json` exists (assets compiled) |
 
-Built-in checks are enabled by default and auto-detected via `class_exists()` and service availability. One check is registered per Doctrine connection (e.g. `doctrine_default`, `doctrine_analytics`). You can disable them in your configuration:
+Built-in checks are enabled by default and auto-detected via `class_exists()` and service availability. One check is registered per Doctrine connection (e.g. `doctrine_default`, `doctrine_analytics`). The asset mapper check verifies that `public/assets/manifest.json` exists (i.e. `asset-map:compile` has been run). You can disable them in your configuration:
 
 ```yaml
 health_check:
     checks:
         doctrine: false
+        asset_mapper: false
 ```
 
 ### Creating a custom check
