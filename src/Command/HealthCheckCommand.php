@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lgarret\HealthCheckBundle\Command;
 
+use Lgarret\HealthCheckBundle\Dto\HealthStatus;
 use Lgarret\HealthCheckBundle\Service\HealthCheckService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -32,7 +33,7 @@ final class HealthCheckCommand extends Command
 
         $rows = [];
         foreach ($result['checks'] as $name => $check) {
-            $status = $check['status'] === 'ok' ? '<fg=green>✓ OK</>' : '<fg=red>✗ KO</>';
+            $status = $check['status'] === HealthStatus::Ok ? '<fg=green>✓ OK</>' : '<fg=red>✗ KO</>';
             $error = $check['error'] ?? '';
             $rows[] = [$name, $status, $error];
         }
@@ -45,13 +46,13 @@ final class HealthCheckCommand extends Command
 
         $io->table(['Check', 'Status', 'Error'], $rows);
 
-        if ($result['status'] === 'ok') {
+        if ($result['status'] === HealthStatus::Ok) {
             $io->success('All checks passed.');
 
             return Command::SUCCESS;
         }
 
-        $failedCount = \count(array_filter($result['checks'], fn (array $c) => $c['status'] === 'ko'));
+        $failedCount = \count(array_filter($result['checks'], fn (array $c) => $c['status'] === HealthStatus::Ko));
         $io->error(\sprintf('%d of %d check(s) failed.', $failedCount, \count($result['checks'])));
 
         return Command::FAILURE;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lgarret\HealthCheckBundle\Controller;
 
+use Lgarret\HealthCheckBundle\Dto\HealthStatus;
 use Lgarret\HealthCheckBundle\Service\HealthCheckService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +22,7 @@ final class HealthCheckController
     public function __invoke(Request $request): JsonResponse
     {
         $result = $this->healthCheckService->runAll();
-        $statusCode = $result['status'] === 'ok' ? Response::HTTP_OK : Response::HTTP_SERVICE_UNAVAILABLE;
+        $statusCode = $result['status'] === HealthStatus::Ok ? Response::HTTP_OK : Response::HTTP_SERVICE_UNAVAILABLE;
 
         if ($this->isAuthorized($request)) {
             $body = $result;

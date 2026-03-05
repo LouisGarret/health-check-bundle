@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-03-05
+
+### Added
+
+- `HealthStatus` string-backed enum (`ok` / `ko`) replacing hardcoded status strings
+
+## [1.0.1] - 2026-03-04
+
 ### Added
 
 - `HealthCheckInterface` for creating custom health checks with auto-discovery

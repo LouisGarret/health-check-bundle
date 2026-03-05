@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lgarret\HealthCheckBundle\Service;
 
 use Lgarret\HealthCheckBundle\Check\HealthCheckInterface;
+use Lgarret\HealthCheckBundle\Dto\HealthStatus;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
@@ -28,14 +29,14 @@ final class HealthCheckService
 
     /**
      * @return array{
-     *     status: 'ok'|'ko',
-     *     checks: array<string, array{status: 'ok'|'ko', error?: string}>
+     *     status: HealthStatus,
+     *     checks: array<string, array{status: HealthStatus, error?: string}>
      * }
      */
     public function runAll(): array
     {
         if ($this->cacheEnabled && $this->cache !== null) {
-            /** @var array{status: 'ok'|'ko', checks: array<string, array{status: 'ok'|'ko', error?: string}>} $cached */
+            /** @var array{status: HealthStatus, checks: array<string, array{status: HealthStatus, error?: string}>} $cached */
             $cached = $this->cache->get(self::CACHE_KEY, function (ItemInterface $item): array {
                 $item->expiresAfter($this->cacheTtl);
 
@@ -50,21 +51,20 @@ final class HealthCheckService
 
     /**
      * @return array{
-     *     status: 'ok'|'ko',
-     *     checks: array<string, array{status: 'ok'|'ko', error?: string}>
+     *     status: HealthStatus,
+     *     checks: array<string, array{status: HealthStatus, error?: string}>
      * }
      */
     private function executeChecks(): array
     {
-        /** @var 'ok'|'ko' $globalStatus */
-        $globalStatus = 'ok';
+        $globalStatus = HealthStatus::Ok;
         $checks = [];
 
         foreach ($this->checks as $check) {
             $checkData = $this->executeCheck($check);
 
-            if ($checkData['status'] === 'ko') {
-                $globalStatus = 'ko';
+            if ($checkData['status'] === HealthStatus::Ko) {
+                $globalStatus = HealthStatus::Ko;
             }
 
             $checks[$check->getName()] = $checkData;
@@ -77,7 +77,7 @@ final class HealthCheckService
     }
 
     /**
-     * @return array{status: 'ok'|'ko', error?: string}
+     * @return array{status: HealthStatus, error?: string}
      */
     private function executeCheck(HealthCheckInterface $check): array
     {
@@ -88,10 +88,10 @@ final class HealthCheckService
             $elapsed = microtime(true) - $startTime;
 
             if ($elapsed > $this->timeout) {
-                return ['status' => 'ko', 'error' => \sprintf('Check timed out (%.1fs > %ds)', $elapsed, $this->timeout)];
+                return ['status' => HealthStatus::Ko, 'error' => \sprintf('Check timed out (%.1fs > %ds)', $elapsed, $this->timeout)];
             }
 
-            $checkData = ['status' => $result->success ? 'ok' : 'ko'];
+            $checkData = ['status' => $result->success ? HealthStatus::Ok : HealthStatus::Ko];
 
             if (!$result->success) {
                 $checkData['error'] = $result->error ?? 'Unknown error';
@@ -99,7 +99,7 @@ final class HealthCheckService
 
             return $checkData;
         } catch (\Throwable $e) {
-            return ['status' => 'ko', 'error' => $e->getMessage()];
+            return ['status' => HealthStatus::Ko, 'error' => $e->getMessage()];
         }
     }
 }

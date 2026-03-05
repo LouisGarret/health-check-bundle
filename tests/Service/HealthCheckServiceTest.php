@@ -6,6 +6,7 @@ namespace Lgarret\HealthCheckBundle\Tests\Service;
 
 use Lgarret\HealthCheckBundle\Check\HealthCheckInterface;
 use Lgarret\HealthCheckBundle\Dto\HealthCheckResult;
+use Lgarret\HealthCheckBundle\Dto\HealthStatus;
 use Lgarret\HealthCheckBundle\Service\HealthCheckService;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -19,7 +20,7 @@ final class HealthCheckServiceTest extends TestCase
 
         $result = $service->runAll();
 
-        self::assertSame('ok', $result['status']);
+        self::assertSame(HealthStatus::Ok, $result['status']);
         self::assertSame([], $result['checks']);
     }
 
@@ -30,8 +31,8 @@ final class HealthCheckServiceTest extends TestCase
 
         $result = $service->runAll();
 
-        self::assertSame('ok', $result['status']);
-        self::assertSame(['status' => 'ok'], $result['checks']['database']);
+        self::assertSame(HealthStatus::Ok, $result['status']);
+        self::assertSame(['status' => HealthStatus::Ok], $result['checks']['database']);
     }
 
     public function testRunAllWithFailingCheck(): void
@@ -41,8 +42,8 @@ final class HealthCheckServiceTest extends TestCase
 
         $result = $service->runAll();
 
-        self::assertSame('ko', $result['status']);
-        self::assertSame('ko', $result['checks']['redis']['status']);
+        self::assertSame(HealthStatus::Ko, $result['status']);
+        self::assertSame(HealthStatus::Ko, $result['checks']['redis']['status']);
         self::assertSame('Connection refused', $result['checks']['redis']['error'] ?? null);
     }
 
@@ -56,9 +57,9 @@ final class HealthCheckServiceTest extends TestCase
 
         $result = $service->runAll();
 
-        self::assertSame('ko', $result['status']);
-        self::assertSame('ok', $result['checks']['database']['status']);
-        self::assertSame('ko', $result['checks']['redis']['status']);
+        self::assertSame(HealthStatus::Ko, $result['status']);
+        self::assertSame(HealthStatus::Ok, $result['checks']['database']['status']);
+        self::assertSame(HealthStatus::Ko, $result['checks']['redis']['status']);
     }
 
     public function testRunAllCatchesExceptions(): void
@@ -71,8 +72,8 @@ final class HealthCheckServiceTest extends TestCase
 
         $result = $service->runAll();
 
-        self::assertSame('ko', $result['status']);
-        self::assertSame('ko', $result['checks']['broken']['status']);
+        self::assertSame(HealthStatus::Ko, $result['status']);
+        self::assertSame(HealthStatus::Ko, $result['checks']['broken']['status']);
         self::assertSame('Unexpected error', $result['checks']['broken']['error'] ?? null);
     }
 
@@ -100,7 +101,7 @@ final class HealthCheckServiceTest extends TestCase
 
         $result = $service->runAll();
 
-        self::assertSame('ok', $result['status']);
+        self::assertSame(HealthStatus::Ok, $result['status']);
     }
 
     public function testRunAllWithCacheDisabled(): void
@@ -118,7 +119,7 @@ final class HealthCheckServiceTest extends TestCase
 
         $result = $service->runAll();
 
-        self::assertSame('ok', $result['status']);
+        self::assertSame(HealthStatus::Ok, $result['status']);
     }
 
     public function testRunAllWithNullCache(): void
@@ -133,7 +134,7 @@ final class HealthCheckServiceTest extends TestCase
 
         $result = $service->runAll();
 
-        self::assertSame('ok', $result['status']);
+        self::assertSame(HealthStatus::Ok, $result['status']);
     }
 
     private function createHealthCheck(string $name, HealthCheckResult $result): HealthCheckInterface
