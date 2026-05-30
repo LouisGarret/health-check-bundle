@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-05-30
+
 ### Added
 
 - Support for Symfony 8.0 / 8.1 (`symfony/cache`, `symfony/console`, `symfony/framework-bundle` now allow `^8.0` alongside `^6.4` and `^7.0`)
