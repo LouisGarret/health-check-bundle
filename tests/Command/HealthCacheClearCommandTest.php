@@ -6,7 +6,6 @@ namespace Lgarret\HealthCheckBundle\Tests\Command;
 
 use Lgarret\HealthCheckBundle\Command\HealthCacheClearCommand;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -39,9 +38,7 @@ final class HealthCacheClearCommandTest extends TestCase
     private function createCommandTester(?CacheInterface $cache): CommandTester
     {
         $command = new HealthCacheClearCommand($cache);
-        $application = new Application();
-        $application->add($command);
 
-        return new CommandTester($application->find('health:cache:clear'));
+        return new CommandTester($command);
     }
 }

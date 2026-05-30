@@ -9,7 +9,6 @@ use Lgarret\HealthCheckBundle\Command\HealthCheckCommand;
 use Lgarret\HealthCheckBundle\Dto\HealthCheckResult;
 use Lgarret\HealthCheckBundle\Service\HealthCheckService;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
 final class HealthCheckCommandTest extends TestCase
@@ -54,10 +53,8 @@ final class HealthCheckCommandTest extends TestCase
     {
         $service = new HealthCheckService(checks: $checks, cacheEnabled: false);
         $command = new HealthCheckCommand($service);
-        $application = new Application();
-        $application->add($command);
 
-        return new CommandTester($application->find('health:check'));
+        return new CommandTester($command);
     }
 
     private function createHealthCheck(string $name, HealthCheckResult $result): HealthCheckInterface

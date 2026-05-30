@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Support for Symfony 8.0 / 8.1 (`symfony/cache`, `symfony/console`, `symfony/framework-bundle` now allow `^8.0` alongside `^6.4` and `^7.0`)
+
+### Changed
+
+- Command tests no longer rely on the `Application::add()` method removed in Symfony 8, passing the command directly to `CommandTester` instead
+
 ## [1.0.3] - 2026-03-05
 
 ### Added
