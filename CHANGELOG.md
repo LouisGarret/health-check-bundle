@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `HealthCheckClient` to query the `/health` endpoint of a remote application (with secret/header support) and get back a typed `RemoteHealthCheckResult` — auto-registered only when `symfony/http-client` is installed (suggested, optional), like the built-in checks
+
+### Changed
+
+- `HealthCheckService::runAll()` now returns a `HealthCheckReport` DTO instead of a plain array, and per-check results are typed `HealthCheckResult` instances instead of array shapes — **BREAKING**: `HealthCheckResult::$success` (`bool`) is replaced by `HealthCheckResult::$status` (`HealthStatus`). Custom checks that only use the `ok()` / `ko()` factories are unaffected; code reading `->success` directly must switch to `->status === HealthStatus::Ok`.
+
 ## [1.1.0] - 2026-05-30
 
 ### Added

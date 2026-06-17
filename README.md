@@ -168,6 +168,53 @@ class DatabaseHealthCheck implements HealthCheckInterface
 }
 ```
 
+### Querying a remote health check endpoint
+
+`HealthCheckClient` lets you query the `/health` endpoint of another Symfony application (e.g. a different site running this same bundle) and get back a typed result instead of raw JSON. It requires `symfony/http-client`:
+
+```bash
+composer require symfony/http-client
+```
+
+```php
+use Lgarret\HealthCheckBundle\Client\HealthCheckClient;
+
+class StatusController
+{
+    public function __construct(private readonly HealthCheckClient $healthCheckClient)
+    {
+    }
+
+    public function __invoke(): Response
+    {
+        $result = $this->healthCheckClient->check(
+            url: 'https://other-site.example.com/health',
+            secret: 'their-secret-token',
+            header: 'X-Health-Token', // optional, defaults to "Authorization"
+            timeout: 3.0,             // optional, defaults to 5 seconds
+        );
+
+        if (!$result->reachable) {
+            // $result->error contains the network/parsing error (timeout, connection refused, invalid response, ...)
+        }
+
+        // $result->report is a HealthCheckReport (status + per-check HealthCheckResult), like the local one
+    }
+}
+```
+
+`HealthCheckClient::check()` returns a `RemoteHealthCheckResult`:
+
+| Property     | Type                    | Description                                                                 |
+|--------------|-------------------------|------------------------------------------------------------------------------|
+| `reachable`  | `bool`                  | `false` if the request failed at the network level or the response couldn't be parsed |
+| `report`     | `?HealthCheckReport`    | The remote health report (`status` + `checks`), present only when `reachable` is `true` |
+| `error`      | `?string`               | Error message, present only when `reachable` is `false`                     |
+
+If no `secret` (or an empty string) is provided, the remote endpoint will only return its global `status` (no `checks` detail), matching the unauthenticated response documented above.
+
+`HealthCheckClient` is only registered as a service when `symfony/http-client` is installed (auto-detected, like the built-in checks). If it isn't installed, autowiring `HealthCheckClient` fails with Symfony's standard "service not found" error at compile time, rather than a runtime exception.
+
 ## Flex recipe
 
 Sample configuration files are available in the `recipe/` directory for use with Symfony Flex.

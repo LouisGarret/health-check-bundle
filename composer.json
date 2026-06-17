@@ -8,17 +8,20 @@
         "php": ">=8.2",
         "symfony/cache": "^6.4 || ^7.0 || ^8.0",
         "symfony/console": "^6.4 || ^7.0 || ^8.0",
-        "symfony/framework-bundle": "^6.4 || ^7.0 || ^8.0"
+        "symfony/framework-bundle": "^6.4 || ^7.0 || ^8.0",
+        "symfony/http-client-contracts": "^3.5"
     },
     "require-dev": {
         "doctrine/dbal": "^4.4",
         "friendsofphp/php-cs-fixer": "^3.0",
         "phpstan/phpstan": "^2.0",
         "phpstan/phpstan-symfony": "^2.0",
-        "phpunit/phpunit": "^10.5 || ^11.0"
+        "phpunit/phpunit": "^10.5 || ^11.0",
+        "symfony/http-client": "^6.4 || ^7.0 || ^8.0"
     },
     "suggest": {
-        "doctrine/dbal": "Required for the built-in Doctrine health check"
+        "doctrine/dbal": "Required for the built-in Doctrine health check",
+        "symfony/http-client": "Required to use HealthCheckClient for querying remote health check endpoints"
     },
     "autoload": {
         "psr-4": {

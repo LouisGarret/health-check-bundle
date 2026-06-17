@@ -20,8 +20,8 @@ final class HealthCheckServiceTest extends TestCase
 
         $result = $service->runAll();
 
-        self::assertSame(HealthStatus::Ok, $result['status']);
-        self::assertSame([], $result['checks']);
+        self::assertSame(HealthStatus::Ok, $result->status);
+        self::assertSame([], $result->checks);
     }
 
     public function testRunAllWithPassingCheck(): void
@@ -31,8 +31,8 @@ final class HealthCheckServiceTest extends TestCase
 
         $result = $service->runAll();
 
-        self::assertSame(HealthStatus::Ok, $result['status']);
-        self::assertSame(['status' => HealthStatus::Ok], $result['checks']['database']);
+        self::assertSame(HealthStatus::Ok, $result->status);
+        self::assertEquals(HealthCheckResult::ok(), $result->checks['database']);
     }
 
     public function testRunAllWithFailingCheck(): void
@@ -42,9 +42,9 @@ final class HealthCheckServiceTest extends TestCase
 
         $result = $service->runAll();
 
-        self::assertSame(HealthStatus::Ko, $result['status']);
-        self::assertSame(HealthStatus::Ko, $result['checks']['redis']['status']);
-        self::assertSame('Connection refused', $result['checks']['redis']['error'] ?? null);
+        self::assertSame(HealthStatus::Ko, $result->status);
+        self::assertSame(HealthStatus::Ko, $result->checks['redis']->status);
+        self::assertSame('Connection refused', $result->checks['redis']->error);
     }
 
     public function testRunAllWithMixedChecks(): void
@@ -57,9 +57,21 @@ final class HealthCheckServiceTest extends TestCase
 
         $result = $service->runAll();
 
-        self::assertSame(HealthStatus::Ko, $result['status']);
-        self::assertSame(HealthStatus::Ok, $result['checks']['database']['status']);
-        self::assertSame(HealthStatus::Ko, $result['checks']['redis']['status']);
+        self::assertSame(HealthStatus::Ko, $result->status);
+        self::assertSame(HealthStatus::Ok, $result->checks['database']->status);
+        self::assertSame(HealthStatus::Ko, $result->checks['redis']->status);
+    }
+
+    public function testRunAllNormalizesOkResultWithStrayError(): void
+    {
+        $check = $this->createHealthCheck('database', new HealthCheckResult(HealthStatus::Ok, 'stray warning'));
+        $service = new HealthCheckService(checks: [$check]);
+
+        $result = $service->runAll();
+
+        self::assertSame(HealthStatus::Ok, $result->status);
+        self::assertEquals(HealthCheckResult::ok(), $result->checks['database']);
+        self::assertNull($result->checks['database']->error);
     }
 
     public function testRunAllCatchesExceptions(): void
@@ -72,9 +84,9 @@ final class HealthCheckServiceTest extends TestCase
 
         $result = $service->runAll();
 
-        self::assertSame(HealthStatus::Ko, $result['status']);
-        self::assertSame(HealthStatus::Ko, $result['checks']['broken']['status']);
-        self::assertSame('Unexpected error', $result['checks']['broken']['error'] ?? null);
+        self::assertSame(HealthStatus::Ko, $result->status);
+        self::assertSame(HealthStatus::Ko, $result->checks['broken']->status);
+        self::assertSame('Unexpected error', $result->checks['broken']->error);
     }
 
     public function testRunAllWithCacheEnabled(): void
@@ -101,7 +113,7 @@ final class HealthCheckServiceTest extends TestCase
 
         $result = $service->runAll();
 
-        self::assertSame(HealthStatus::Ok, $result['status']);
+        self::assertSame(HealthStatus::Ok, $result->status);
     }
 
     public function testRunAllWithCacheDisabled(): void
@@ -119,7 +131,7 @@ final class HealthCheckServiceTest extends TestCase
 
         $result = $service->runAll();
 
-        self::assertSame(HealthStatus::Ok, $result['status']);
+        self::assertSame(HealthStatus::Ok, $result->status);
     }
 
     public function testRunAllWithNullCache(): void
@@ -134,7 +146,7 @@ final class HealthCheckServiceTest extends TestCase
 
         $result = $service->runAll();
 
-        self::assertSame(HealthStatus::Ok, $result['status']);
+        self::assertSame(HealthStatus::Ok, $result->status);
     }
 
     private function createHealthCheck(string $name, HealthCheckResult $result): HealthCheckInterface

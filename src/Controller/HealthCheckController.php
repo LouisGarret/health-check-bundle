@@ -22,12 +22,12 @@ final class HealthCheckController
     public function __invoke(Request $request): JsonResponse
     {
         $result = $this->healthCheckService->runAll();
-        $statusCode = $result['status'] === HealthStatus::Ok ? Response::HTTP_OK : Response::HTTP_SERVICE_UNAVAILABLE;
+        $statusCode = $result->status === HealthStatus::Ok ? Response::HTTP_OK : Response::HTTP_SERVICE_UNAVAILABLE;
 
         if ($this->isAuthorized($request)) {
             $body = $result;
         } else {
-            $body = ['status' => $result['status']];
+            $body = ['status' => $result->status];
         }
 
         return new JsonResponse($body, $statusCode);

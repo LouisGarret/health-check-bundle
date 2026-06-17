@@ -6,6 +6,7 @@ namespace Lgarret\HealthCheckBundle\Tests\Check\Builtin;
 
 use Doctrine\DBAL\Connection;
 use Lgarret\HealthCheckBundle\Check\Builtin\DoctrineCheck;
+use Lgarret\HealthCheckBundle\Dto\HealthStatus;
 use PHPUnit\Framework\TestCase;
 
 final class DoctrineCheckTest extends TestCase
@@ -36,7 +37,7 @@ final class DoctrineCheckTest extends TestCase
         $check = new DoctrineCheck($connection);
         $result = $check->check();
 
-        self::assertTrue($result->success);
+        self::assertSame(HealthStatus::Ok, $result->status);
         self::assertNull($result->error);
     }
 
@@ -50,7 +51,7 @@ final class DoctrineCheckTest extends TestCase
         $check = new DoctrineCheck($connection);
         $result = $check->check();
 
-        self::assertFalse($result->success);
+        self::assertSame(HealthStatus::Ko, $result->status);
         self::assertSame('Connection refused', $result->error);
     }
 }
