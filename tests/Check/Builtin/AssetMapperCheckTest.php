@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lgarret\HealthCheckBundle\Tests\Check\Builtin;
 
 use Lgarret\HealthCheckBundle\Check\Builtin\AssetMapperCheck;
+use Lgarret\HealthCheckBundle\Dto\HealthStatus;
 use PHPUnit\Framework\TestCase;
 
 final class AssetMapperCheckTest extends TestCase
@@ -25,7 +26,7 @@ final class AssetMapperCheckTest extends TestCase
             $check = new AssetMapperCheck($manifestPath);
             $result = $check->check();
 
-            self::assertTrue($result->success);
+            self::assertSame(HealthStatus::Ok, $result->status);
         } finally {
             unlink($manifestPath);
         }
@@ -36,7 +37,7 @@ final class AssetMapperCheckTest extends TestCase
         $check = new AssetMapperCheck('/tmp/nonexistent_manifest.json');
         $result = $check->check();
 
-        self::assertFalse($result->success);
+        self::assertSame(HealthStatus::Ko, $result->status);
         self::assertNotNull($result->error);
         self::assertStringContainsString('asset-map:compile', $result->error);
     }
