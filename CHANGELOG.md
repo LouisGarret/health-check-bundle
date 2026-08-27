@@ -19,9 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - The recipe now writes the bundle defaults explicitly in `config/packages/health_check.yaml`
-  instead of leaving them as commented-out lines. `secret` stays commented on purpose: it is
-  the only option with no safe default, since an empty value makes `hash_equals()` match an
-  empty `Authorization` header and exposes the detailed check results to anyone
+  instead of leaving them as commented-out lines, and provisions `HEALTH_CHECK_SECRET=!ChangeMe!`
+  in `.env` so `secret` ships enabled. The placeholder matters: an empty secret would make
+  `hash_equals()` match an empty `Authorization` header and expose the detailed check results
+  to any caller
 
 ## [1.3.0] - 2026-08-27
 
