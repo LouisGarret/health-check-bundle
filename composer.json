@@ -50,7 +50,9 @@
         "test": "phpunit",
         "phpstan": "phpstan analyse",
         "cs-check": "php-cs-fixer fix --dry-run --diff",
-        "cs-fix": "php-cs-fixer fix"
+        "cs-fix": "php-cs-fixer fix",
+        "flex-endpoint": "php bin/build-flex-endpoint.php",
+        "flex-endpoint-check": "php bin/build-flex-endpoint.php --check"
     },
     "minimum-stability": "stable",
     "prefer-stable": true

@@ -1,0 +1,17 @@
+{
+    "bundles": {
+        "Lgarret\\HealthCheckBundle\\HealthCheckBundle": ["all"]
+    },
+    "copy-from-recipe": {
+        "config/": "%CONFIG_DIR%/"
+    },
+    "post-install-output": [
+        "  * The health check endpoint is exposed at <fg=green>/health</>.",
+        "",
+        "  * If your firewall covers every path, grant it anonymous access in <comment>config/packages/security.yaml</>:",
+        "        <comment>access_control:</>",
+        "            <comment>- { path: ^/health$, roles: PUBLIC_ACCESS }</>",
+        "",
+        "  * Enable, disable and tune the checks in <comment>config/packages/health_check.yaml</>."
+    ]
+}

@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- A real Symfony Flex recipe, served from a Flex endpoint published at
+  `https://raw.githubusercontent.com/LouisGarret/health-check-bundle/main/flex/index.json`.
+  Projects that register it in `extra.symfony.endpoint` now get `config/packages/health_check.yaml`,
+  `config/routes/health_check.yaml` and the `config/bundles.php` entry on `composer require`,
+  instead of falling back to Flex's auto-generated recipe
+- `composer flex-endpoint` / `composer flex-endpoint-check` to regenerate and verify that endpoint;
+  the check runs in CI
+
+### Changed
+
+- `recipe/` moved to the `recipe/lgarret/health-check-bundle/<version>/` layout used by
+  `symfony/recipes-contrib`, and gained the `manifest.json` it was missing. The previous
+  `recipe/config/` files were inert: Flex never reads recipes from inside an installed package
+- The recipe imports routes through the bundle's route loader (`resource: .`, `type: health_check`),
+  which works on every released version, rather than `@HealthCheckBundle/config/routes.php`,
+  which needs 1.2.1 or later
+
 ## [1.2.1] - 2026-08-27
 
 ### Fixed

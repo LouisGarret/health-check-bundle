@@ -1,0 +1,15 @@
+{
+    "recipes": {
+        "lgarret/health-check-bundle": [
+            "1.0"
+        ]
+    },
+    "branch": "main",
+    "is_contrib": false,
+    "_links": {
+        "repository": "github.com/LouisGarret/health-check-bundle",
+        "origin_template": "{package}:{version}@github.com/LouisGarret/health-check-bundle:main",
+        "recipe_template": "https://raw.githubusercontent.com/LouisGarret/health-check-bundle/main/flex/{package_dotted}.{version}.json",
+        "recipe_template_relative": "{package_dotted}.{version}.json"
+    }
+}
