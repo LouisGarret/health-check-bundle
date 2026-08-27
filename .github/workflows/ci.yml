@@ -41,6 +41,3 @@ jobs:
 
       - name: Run PHPUnit tests
         run: composer test
-
-      - name: Check the Flex endpoint is in sync with recipe/
-        run: composer flex-endpoint-check

@@ -1,10 +1,15 @@
 health_check:
     path: '/health'
-    # secret: '%env(HEALTH_CHECK_SECRET)%'
-    # header: 'Authorization'
-    # timeout: 5
-    # cache:
-    #     enabled: true
-    #     ttl: 300
-    # checks:
-    #     doctrine: true
+    header: 'Authorization'
+    timeout: 5
+    cache:
+        enabled: true
+        ttl: 300
+    checks:
+        doctrine: true
+        asset_mapper: true
+
+    # Token required to expose the detailed check results. Leave it unset to keep
+    # them private: an empty value would hand the details to any caller sending an
+    # empty Authorization header.
+    #secret: '%env(HEALTH_CHECK_SECRET)%'

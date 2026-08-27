@@ -12,6 +12,8 @@
         "        <comment>access_control:</>",
         "            <comment>- { path: ^/health$, roles: PUBLIC_ACCESS }</>",
         "",
-        "  * Enable, disable and tune the checks in <comment>config/packages/health_check.yaml</>."
+        "  * Enable, disable and tune the checks in <comment>config/packages/health_check.yaml</>.",
+        "",
+        "  * Docs: <comment>https://github.com/LouisGarret/health-check-bundle</>"
     ]
 }

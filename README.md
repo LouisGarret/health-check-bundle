@@ -8,26 +8,22 @@ A Symfony bundle providing a `/health` endpoint to monitor your application and 
 
 ## Installation
 
-This bundle ships a Symfony Flex recipe. Flex never reads recipes from inside an
-installed package — it only fetches them from the HTTP endpoints listed in
-`extra.symfony.endpoint` — so register this one **before** requiring the package:
-
 ```bash
-composer config --json extra.symfony.endpoint '["https://raw.githubusercontent.com/LouisGarret/health-check-bundle/main/flex/index.json", "flex://defaults"]'
 composer require lgarret/health-check-bundle
 ```
 
-Keep `flex://defaults` in the list: it restores the official Symfony endpoints,
-without which Composer fails with *"The Flex index is missing a `splits` entry"*.
+A Flex recipe is [awaiting review](https://github.com/symfony/recipes-contrib/pull/2035)
+in `symfony/recipes-contrib`. Once it is merged, `composer require` asks whether to
+execute it — answer `y` and everything below is configured for you.
 
-The recipe registers the bundle, writes `config/packages/health_check.yaml` and
-`config/routes/health_check.yaml`, and reminds you to open the route in your
-firewall.
+Flex skips contrib recipes in non-interactive installs (CI, Docker images built with
+`--no-interaction`). Projects that rely on them there should opt in once:
 
-Without the endpoint, `composer require` falls back to Flex's auto-generated
-recipe (`Configuring lgarret/health-check-bundle: From auto-generated recipe`),
-which only registers the bundle in `config/bundles.php`. Everything else has to
-be done by hand, as described below.
+```bash
+composer config extra.symfony.allow-contrib true
+```
+
+Until the recipe is merged, set the bundle up by hand.
 
 ### Manual setup
 
@@ -246,15 +242,11 @@ If no `secret` (or an empty string) is provided, the remote endpoint will only r
 
 ## Flex recipe
 
-The recipe sources live in `recipe/lgarret/health-check-bundle/<version>/`, laid
-out exactly like [symfony/recipes-contrib](https://github.com/symfony/recipes-contrib).
-`flex/` holds the generated endpoint Flex actually downloads. Regenerate it after
-any change to `recipe/`:
-
-```bash
-composer flex-endpoint        # regenerate flex/
-composer flex-endpoint-check  # fail if flex/ is out of date (run in CI)
-```
+The recipe sources live in `recipe/lgarret/health-check-bundle/<version>/`, in the
+layout [`symfony/recipes-contrib`](https://github.com/symfony/recipes-contrib) expects,
+and are submitted there verbatim. Flex only ever fetches recipes from that repository —
+never from inside an installed package — so changes here take effect through a pull
+request, not a release.
 
 ## Development
 

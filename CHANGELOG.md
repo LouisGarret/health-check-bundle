@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2026-08-27
+
+### Removed
+
+- The self-hosted Flex endpoint shipped in 1.3.0 (`flex/`, `bin/build-flex-endpoint.php`,
+  `composer flex-endpoint` / `flex-endpoint-check`). Making every project declare
+  `extra.symfony.endpoint` is the wrong trade-off for a public package. The recipe is
+  submitted to `symfony/recipes-contrib` instead
+  ([#2035](https://github.com/symfony/recipes-contrib/pull/2035)), which Flex reads out of
+  the box. No library code is affected
+
+### Changed
+
+- The recipe now writes the bundle defaults explicitly in `config/packages/health_check.yaml`
+  instead of leaving them as commented-out lines. `secret` stays commented on purpose: it is
+  the only option with no safe default, since an empty value makes `hash_equals()` match an
+  empty `Authorization` header and exposes the detailed check results to anyone
+
 ## [1.3.0] - 2026-08-27
 
 ### Added
